@@ -116,15 +116,15 @@ ui <- fluidPage(
           ),
           tags$div(class = "control-group",
             tags$label("X Axis"),
-            selectInput("x_col", NULL)
+            selectInput("x_col", NULL, choices = NULL)
           ),
           tags$div(class = "control-group",
             tags$label("Y Axis"),
-            selectInput("y_col", NULL)
+            selectInput("y_col", NULL, choices = NULL)
           ),
           tags$div(class = "control-group",
             tags$label("Color By"),
-            selectInput("color_col", NULL, choices = c("None"))
+            selectInput("color_col", NULL, choices = NULL)
           )
         ),
         tags$div(class = "chart-container",
@@ -138,11 +138,11 @@ ui <- fluidPage(
         tags$div(class = "ts-controls",
           tags$div(class = "control-group",
             tags$label("Date Column"),
-            selectInput("ts_date_col", NULL)
+            selectInput("ts_date_col", NULL, choices = NULL)
           ),
           tags$div(class = "control-group",
             tags$label("Value Column"),
-            selectInput("ts_value_col", NULL)
+            selectInput("ts_value_col", NULL, choices = NULL)
           ),
           tags$div(class = "control-group",
             tags$label("Forecast Periods"),
