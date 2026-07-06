@@ -10,6 +10,22 @@ library(plotly)
 library(dplyr)
 library(tidyr)
 
+# Supported file types
+SUPPORTED_FORMATS <- c("csv", "txt", "tsv", "xls", "xlsx")
+
+# Source modules
+source("modules/data_processor.R")
+source("modules/statistics.R")
+source("modules/visualizations.R")
+source("modules/time_series.R")
+source("modules/report.R")
+
+# Global variables
+UPLOAD_DIR <- "uploads"
+REPORT_DIR <- "reports"
+dir.create(UPLOAD_DIR, showWarnings = FALSE)
+dir.create(REPORT_DIR, showWarnings = FALSE)
+
 # ---- UI ----
 ui <- fluidPage(
   useShinyjs(),
