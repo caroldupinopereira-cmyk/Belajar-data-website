@@ -1,0 +1,39 @@
+---
+title: "Visualisasi Data"
+---
+
+# Visualisasi Data dengan R
+
+Visualisasi membantu memahami data secara lebih mudah.
+
+## Package Populer:
+
+1. **ggplot2** - Visualisasi dengan grammar of graphics
+2. **plotly** - Interaktif
+3. **shiny** - Dashboard interaktif
+
+## Contoh dengan ggplot2:
+
+```r
+library(ggplot2)
+
+# Scatter plot
+ggplot(mtcars, aes(x = wt, y = mpg, color = factor(cyl))) +
+  geom_point(size = 3) +
+  labs(title = "Fuel Efficiency",
+       x = "Weight (1000 lbs)",
+       y = "Miles per Gallon") +
+  theme_minimal()
+
+# Bar plot
+ggplot(mpg, aes(x = class)) +
+  geom_bar(fill = "steelblue") +
+  labs(title = "Jumlah Mobil per Kelas")
+```
+
+## Tips Visualisasi:
+
+- Pilih grafik yang sesuai dengan jenis data
+- Gunakan warna dengan bijak
+- Beri label yang jelas
+- Sederhana lebih baik

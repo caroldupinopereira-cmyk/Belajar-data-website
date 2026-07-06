@@ -10,3 +10,5 @@ navbar:
       href: "data-science.html"
     - text: "Statistik"
       href: "statistik.html"
+    - text: "Visualisasi"
+      href: "visualisasi.html"

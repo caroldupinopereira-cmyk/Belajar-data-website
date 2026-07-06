@@ -1,0 +1,39 @@
+---
+title: "Statistik"
+---
+
+# Belajar Statistik
+
+Statistik adalah ilmu mengumpulkan, menganalisis, dan menginterpretasi data.
+
+## Jenis Statistik:
+
+### 1. Statistik Deskriptif
+Menggambarkan data dengan:
+- Mean (rata-rata)
+- Median (nilai tengah)
+- Modus (nilai terbanyak)
+- Standard Deviasi
+
+### 2. Statistik Inferensial
+Membuat kesimpulan dari data sampel ke populasi.
+
+## Contoh Kode R:
+
+```r
+# Statistik deskriptif
+data <- c(10, 20, 30, 40, 50)
+
+mean(data)    # Rata-rata
+median(data)  # Median
+sd(data)      # Standard deviasi
+
+# Visualisasi
+hist(data, main = "Histogram Data", col = "lightblue")
+```
+
+## Konsep Penting:
+
+- **Populasi**: Seluruh data yang ingin diteliti
+- **Sampel**: Bagian dari populasi
+- **Variabel**: Karakteristik yang diukur
