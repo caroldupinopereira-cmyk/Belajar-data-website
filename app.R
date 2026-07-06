@@ -32,6 +32,16 @@ ui <- dashboardPage(
   skin = "blue",
   dashboardHeader(title = "Intelligent Data Analytics Dashboard"),
   dashboardSidebar(
+    sidebarMenu(
+      id = "tabs",
+      menuItem("Home", tabName = "home", icon = icon("home")),
+      menuItem("Explore", tabName = "explore", icon = icon("search")),
+      menuItem("Statistics", tabName = "statistics", icon = icon("chart-bar")),
+      menuItem("Visualize", tabName = "visualize", icon = icon("chart-line")),
+      menuItem("Time Series", tabName = "timeseries", icon = icon("clock")),
+      menuItem("Reports", tabName = "reports", icon = icon("file-alt"))
+    ),
+    tags$hr(),
     fileInput("file_upload", "Upload Data", accept = SUPPORTED_FORMATS),
     tags$hr(),
     tags$div(style = "padding: 10px;",
