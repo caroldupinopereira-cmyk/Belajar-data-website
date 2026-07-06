@@ -1,0 +1,17 @@
+---
+title: "Tentang Website Ini"
+---
+
+# Tentang
+
+Website ini dibuat untuk:
+- Belajar data science dari nol
+- Praktik langsung dengan R
+- Contoh kode yang mudah dipahami
+
+## Tools yang Digunakan:
+
+- R
+- R Markdown
+- Tidyverse
+- ggplot2

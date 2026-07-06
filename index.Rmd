@@ -1,0 +1,18 @@
+---
+title: "Selamat Datang di Website Belajar Data"
+---
+
+# Website Belajar Data
+
+Website ini dibuat untuk membantu Anda belajar tentang data science dan statistik.
+
+## Topik yang Dibahas:
+
+1. **Data Science** - Pengenalan konsep dasar
+2. **Statistik** - Analisis data
+3. **Visualisasi Data** - Membuat grafik dan chart
+4. **Machine Learning** - Algoritma prediksi
+
+---
+
+*Website ini dibuat menggunakan R Markdown*
