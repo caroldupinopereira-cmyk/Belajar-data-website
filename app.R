@@ -201,26 +201,6 @@ server <- function(input, output, session) {
       showElement("data-info-panel")
       showElement("column-panel")
 
-      # Data info
-      info <- get_data_summary(rv$data)
-      output_info <- paste0(
-        "<div class='info-item'><strong>File:</strong> ", rv$filename, "</div>",
-        "<div class='info-item'><strong>Rows:</strong> ", info$rows, "</div>",
-        "<div class='info-item'><strong>Columns:</strong> ", info$cols, "</div>",
-        "<div class='info-item'><strong>Missing:</strong> ", info$missing_total, "</div>"
-      )
-      HTML(output_info) -> output$data_info_content
-
-      # Column list
-      col_html <- paste(
-        sapply(names(rv$data), function(col) {
-          type <- class(rv$data[[col]])[1]
-          paste0("<div class='col-item'>", col, " <span class='col-type'>", type, "</span></div>")
-        }),
-        collapse = ""
-      )
-      HTML(col_html) -> output$column_list
-
       # Update inputs
       updateSelectInput(session, "x_col", choices = names(rv$data))
       updateSelectInput(session, "y_col", choices = names(rv$data))
@@ -231,39 +211,54 @@ server <- function(input, output, session) {
       # Calculate stats
       rv$stats <- calculate_statistics(rv$data)
 
-      # Show explore content
-      output$explore_content <- renderUI({
-        tags$div(
-          DT::datatable(head(rv$data, 20), options = list(scrollX = TRUE, pageLength = 10))
-        )
-      })
-
       showNotification(paste("File", rv$filename, "uploaded successfully!"), type = "message")
     } else {
       showNotification(result$message, type = "error")
     }
   })
 
-  # Statistics output
-  observe({
-    req(rv$stats)
-    if (!is.null(rv$stats) && !is.null(rv$stats$correlation)) {
-      output$correlation_plot <- renderPlotly({
-        create_heatmap(rv$stats$correlation)
-      })
-      showElement("correlation-section")
-    }
+  # Data info output
+  output$data_info_content <- renderUI({
+    req(rv$data)
+    info <- get_data_summary(rv$data)
+    HTML(paste0(
+      "<div class='info-item'><strong>File:</strong> ", rv$filename, "</div>",
+      "<div class='info-item'><strong>Rows:</strong> ", info$rows, "</div>",
+      "<div class='info-item'><strong>Columns:</strong> ", info$cols, "</div>",
+      "<div class='info-item'><strong>Missing:</strong> ", info$missing_total, "</div>"
+    ))
   })
 
-  output$stats_grid <- renderUI({
-    req(rv$stats)
+  # Column list output
+  output$column_list <- renderUI({
     req(rv$data)
+    col_html <- paste(
+      sapply(names(rv$data), function(col) {
+        type <- class(rv$data[[col]])[1]
+        paste0("<div class='col-item'>", col, " <span class='col-type'>", type, "</span></div>")
+      }),
+      collapse = ""
+    )
+    HTML(col_html)
+  })
 
+  # Explore content
+  output$explore_content <- renderUI({
+    req(rv$data)
+    tagList(
+      DT::datatable(head(rv$data, 20), options = list(scrollX = TRUE, pageLength = 10))
+    )
+  })
+
+  # Stats grid
+  output$stats_grid <- renderUI({
+    req(rv$stats, rv$data)
     numeric_cols <- names(rv$data)[sapply(rv$data, is.numeric)]
     if (length(numeric_cols) == 0) return(tags$p("No numeric columns found"))
 
     cards <- lapply(numeric_cols[1:min(6, length(numeric_cols))], function(col) {
       s <- rv$stats[[col]]
+      if (is.null(s)) return(NULL)
       tags$div(class = "stat-card",
         tags$h4(col),
         tags$div(class = "stat-values",
@@ -278,20 +273,32 @@ server <- function(input, output, session) {
     do.call(tagList, cards)
   })
 
-  # Visualization
-  output$main_chart <- renderPlotly({
-    req(rv$data, input$chart_type)
-    color <- if (input$color_col == "None") NULL else input$color_col
+  # Correlation plot
+  output$correlation_plot <- renderPlotly({
+    req(rv$stats)
+    if (!is.null(rv$stats$correlation)) {
+      create_heatmap(rv$stats$correlation)
+    }
+  })
 
-    switch(input$chart_type,
-      "Scatter" = create_scatter_plot(rv$data, input$x_col, input$y_col, color),
-      "Bar" = create_bar_plot(rv$data, input$x_col, input$y_col),
-      "Histogram" = create_histogram(rv$data, input$x_col),
-      "Box Plot" = create_box_plot(rv$data, input$y_col, color),
-      "Line" = create_line_plot(rv$data, input$x_col, input$y_col, color),
-      "Heatmap" = create_heatmap(rv$stats$correlation),
-      "Pie" = create_pie_chart(rv$data, input$x_col)
-    )
+  # Main chart
+  output$main_chart <- renderPlotly({
+    req(rv$data, input$chart_type, input$x_col)
+    color <- if (is.null(input$color_col) || input$color_col == "None") NULL else input$color_col
+
+    tryCatch({
+      switch(input$chart_type,
+        "Scatter" = create_scatter_plot(rv$data, input$x_col, input$y_col, color),
+        "Bar" = create_bar_plot(rv$data, input$x_col, input$y_col),
+        "Histogram" = create_histogram(rv$data, input$x_col),
+        "Box Plot" = create_box_plot(rv$data, input$y_col, color),
+        "Line" = create_line_plot(rv$data, input$x_col, input$y_col, color),
+        "Heatmap" = create_heatmap(rv$stats$correlation),
+        "Pie" = create_pie_chart(rv$data, input$x_col)
+      )
+    }, error = function(e) {
+      plotly_empty() %>% layout(title = "Select columns to visualize")
+    })
   })
 
   # Time Series
