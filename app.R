@@ -1,9 +1,10 @@
 # ============================================================
 # Intelligent Data Analytics Dashboard
-# Main Application (Shiny Server)
+# Using shinydashboard for stable UI
 # ============================================================
 
 library(shiny)
+library(shinydashboard)
 library(shinyjs)
 library(DT)
 library(plotly)
@@ -27,151 +28,158 @@ dir.create(UPLOAD_DIR, showWarnings = FALSE)
 dir.create(REPORT_DIR, showWarnings = FALSE)
 
 # ---- UI ----
-ui <- fluidPage(
-  useShinyjs(),
-  tags$head(
-    tags$link(rel = "stylesheet", href = "css/style.css"),
-    tags$script(src = "js/main.js")
-  ),
-
-  # Navigation
-  tags$nav(class = "navbar",
-    tags$div(class = "nav-brand", "Intelligent Data Analytics Dashboard"),
-    tags$div(class = "nav-links",
-      tags$a(href = "#upload", class = "nav-link active", "Upload"),
-      tags$a(href = "#explore", class = "nav-link", "Explore"),
-      tags$a(href = "#statistics", class = "nav-link", "Statistics"),
-      tags$a(href = "#visualize", class = "nav-link", "Visualize"),
-      tags$a(href = "#timeseries", class = "nav-link", "Time Series"),
-      tags$a(href = "#reports", class = "nav-link", "Reports")
+ui <- dashboardPage(
+  skin = "blue",
+  dashboardHeader(title = "Intelligent Data Analytics Dashboard"),
+  dashboardSidebar(
+    fileInput("file_upload", "Upload Data", accept = SUPPORTED_FORMATS),
+    tags$hr(),
+    tags$div(style = "padding: 10px;",
+      tags$strong("Supported Formats:"),
+      tags$br(),
+      tags$span(class = "label label-info", "CSV"), " ",
+      tags$span(class = "label label-info", "TXT"), " ",
+      tags$span(class = "label label-info", "XLS"), " ",
+      tags$span(class = "label label-info", "XLSX")
+    ),
+    tags$hr(),
+    tags$div(id = "data-info-sidebar", style = "padding: 10px; display:none;",
+      tags$strong("Dataset Info:"),
+      tags$div(id = "sidebar-info")
+    ),
+    tags$div(id = "column-sidebar", style = "padding: 10px; display:none;",
+      tags$strong("Columns:"),
+      tags$div(id = "sidebar-columns")
     )
   ),
-
-  # Sidebar
-  tags$div(class = "app-container",
-    tags$div(class = "sidebar",
-      tags$div(class = "sidebar-section",
-        tags$h4("Data Source"),
-        fileInput("file_upload", NULL, accept = SUPPORTED_FORMATS),
-        tags$div(class = "supported-formats",
-          tags$span(class = "format-badge", "CSV"),
-          tags$span(class = "format-badge", "TXT"),
-          tags$span(class = "format-badge", "XLS"),
-          tags$span(class = "format-badge", "XLSX")
-        )
-      ),
-      tags$div(class = "sidebar-section", id = "data-info-panel", style = "display:none;",
-        tags$h4("Dataset Info"),
-        tags$div(id = "data-info-content")
-      ),
-      tags$div(class = "sidebar-section", id = "column-panel", style = "display:none;",
-        tags$h4("Columns"),
-        tags$div(id = "column-list")
-      )
+  dashboardBody(
+    useShinyjs(),
+    tags$head(
+      tags$style(HTML("
+        .content-wrapper { background-color: #f4f6f9; }
+        .stat-box { background: white; padding: 15px; border-radius: 5px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .stat-box h4 { margin-top: 0; color: #3498db; }
+        .stat-value { font-size: 18px; font-weight: bold; }
+        .stat-label { color: #7f8c8d; font-size: 12px; }
+        .chart-box { background: white; padding: 15px; border-radius: 5px; margin-bottom: 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+      "))
     ),
-
-    # Main Content
-    tags$div(class = "main-content",
-
-      # Upload Section
-      tags$div(id = "upload", class = "section active",
-        tags$div(class = "upload-area", id = "drop-zone",
-          tags$div(class = "upload-icon", "📁"),
-          tags$h3("Drag & Drop File Here"),
-          tags$p("or click to browse"),
-          tags$p(class = "upload-hint", "Supports: CSV, TXT, XLS, XLSX")
-        ),
-        tags$div(id = "upload-status", style = "display:none;")
-      ),
-
-      # Explore Section
-      tags$div(id = "explore", class = "section",
-        tags$h2("Data Exploration"),
-        tags$div(class = "explore-tabs",
-          tags$button(class = "tab-btn active", "Preview"),
-          tags$button(class = "tab-btn", "Summary"),
-          tags$button(class = "tab-btn", "Missing Data")
-        ),
-        tags$div(id = "explore-content")
-      ),
-
-      # Statistics Section
-      tags$div(id = "statistics", class = "section",
-        tags$h2("Statistical Analysis"),
-        tags$div(class = "stats-grid", id = "stats-grid"),
-        tags$div(id = "correlation-section", style = "display:none;",
-          tags$h3("Correlation Matrix"),
-          plotlyOutput("correlation_plot", height = "400px")
+    tabItems(
+      # Tab 1: Home / Upload
+      tabItem(tabName = "home",
+        fluidRow(
+          box(title = "Welcome", width = 12, status = "primary", solidHeader = TRUE,
+            tags$h3("Intelligent Data Analytics Dashboard"),
+            tags$p("Upload your data file to start analyzing."),
+            tags$hr(),
+            tags$h4("Features:"),
+            tags$ul(
+              tags$li("Data Exploration & Summary Statistics"),
+              tags$li("Interactive Visualizations (Scatter, Bar, Histogram, Box Plot, Line, Pie, Heatmap)"),
+              tags$li("Time Series Analysis & Forecasting"),
+              tags$li("Automatic Report Generation")
+            )
+          )
         )
       ),
 
-      # Visualize Section
-      tags$div(id = "visualize", class = "section",
-        tags$h2("Data Visualization"),
-        tags$div(class = "viz-controls",
-          tags$div(class = "control-group",
-            tags$label("Chart Type"),
-            selectInput("chart_type", NULL,
-              choices = c("Scatter", "Bar", "Histogram", "Box Plot", "Line", "Heatmap", "Pie"))
-          ),
-          tags$div(class = "control-group",
-            tags$label("X Axis"),
-            selectInput("x_col", NULL, choices = NULL)
-          ),
-          tags$div(class = "control-group",
-            tags$label("Y Axis"),
-            selectInput("y_col", NULL, choices = NULL)
-          ),
-          tags$div(class = "control-group",
-            tags$label("Color By"),
-            selectInput("color_col", NULL, choices = NULL)
+      # Tab 2: Explore
+      tabItem(tabName = "explore",
+        fluidRow(
+          box(title = "Data Preview", width = 12, status = "primary", solidHeader = TRUE,
+            DT::dataTableOutput("data_table")
           )
         ),
-        tags$div(class = "chart-container",
-          plotlyOutput("main_chart", height = "500px")
+        fluidRow(
+          box(title = "Data Summary", width = 6, status = "info", solidHeader = TRUE,
+            verbatimTextOutput("data_summary")
+          ),
+          box(title = "Missing Values", width = 6, status = "warning", solidHeader = TRUE,
+            plotlyOutput("missing_plot")
+          )
         )
       ),
 
-      # Time Series Section
-      tags$div(id = "timeseries", class = "section",
-        tags$h2("Time Series Analysis"),
-        tags$div(class = "ts-controls",
-          tags$div(class = "control-group",
-            tags$label("Date Column"),
-            selectInput("ts_date_col", NULL, choices = NULL)
-          ),
-          tags$div(class = "control-group",
-            tags$label("Value Column"),
-            selectInput("ts_value_col", NULL, choices = NULL)
-          ),
-          tags$div(class = "control-group",
-            tags$label("Forecast Periods"),
-            numericInput("forecast_n", NULL, value = 12, min = 1, max = 60)
-          ),
-          tags$button(class = "btn btn-primary", id = "run_forecast", "Run Forecast")
-        ),
-        tags$div(id = "ts-results", style = "display:none;",
-          plotlyOutput("ts_plot", height = "400px"),
-          tags$div(id = "ts-summary")
-        )
-      ),
-
-      # Reports Section
-      tags$div(id = "reports", class = "section",
-        tags$h2("Report Generation"),
-        tags$div(class = "report-options",
-          tags$div(class = "report-option",
-            tags$h4("Quick Report"),
-            tags$p("Generate HTML report with all analyses"),
-            tags$button(class = "btn btn-primary", id = "generate_html", "Generate HTML")
-          ),
-          tags$div(class = "report-option",
-            tags$h4("PDF Report"),
-            tags$p("Export as PDF document"),
-            tags$button(class = "btn btn-secondary", id = "generate_pdf", "Generate PDF")
+      # Tab 3: Statistics
+      tabItem(tabName = "statistics",
+        fluidRow(
+          box(title = "Descriptive Statistics", width = 12, status = "primary", solidHeader = TRUE,
+            uiOutput("stats_cards")
           )
         ),
-        tags$div(id = "report-status")
+        fluidRow(
+          box(title = "Correlation Heatmap", width = 12, status = "info", solidHeader = TRUE,
+            plotlyOutput("correlation_plot", height = "500px")
+          )
+        )
+      ),
+
+      # Tab 4: Visualize
+      tabItem(tabName = "visualize",
+        fluidRow(
+          box(title = "Chart Settings", width = 12, status = "primary", solidHeader = TRUE,
+            fluidRow(
+              column(3, selectInput("chart_type", "Chart Type", 
+                choices = c("Scatter", "Bar", "Histogram", "Box Plot", "Line", "Pie"))),
+              column(3, selectInput("x_col", "X Axis", choices = NULL)),
+              column(3, selectInput("y_col", "Y Axis", choices = NULL)),
+              column(3, selectInput("color_col", "Color By", choices = NULL))
+            )
+          )
+        ),
+        fluidRow(
+          box(title = "Chart", width = 12, status = "info", solidHeader = TRUE,
+            plotlyOutput("main_chart", height = "500px")
+          )
+        )
+      ),
+
+      # Tab 5: Time Series
+      tabItem(tabName = "timeseries",
+        fluidRow(
+          box(title = "Time Series Settings", width = 12, status = "primary", solidHeader = TRUE,
+            fluidRow(
+              column(3, selectInput("ts_date_col", "Date Column", choices = NULL)),
+              column(3, selectInput("ts_value_col", "Value Column", choices = NULL)),
+              column(3, numericInput("forecast_n", "Forecast Periods", value = 12, min = 1, max = 60)),
+              column(3, tags$br(), actionButton("run_forecast", "Run Forecast", class = "btn-primary"))
+            )
+          )
+        ),
+        fluidRow(
+          box(title = "Forecast Plot", width = 12, status = "info", solidHeader = TRUE,
+            plotlyOutput("ts_plot", height = "400px")
+          )
+        ),
+        fluidRow(
+          box(title = "Time Series Summary", width = 12, status = "info", solidHeader = TRUE,
+            uiOutput("ts_summary")
+          )
+        )
+      ),
+
+      # Tab 6: Reports
+      tabItem(tabName = "reports",
+        fluidRow(
+          box(title = "Generate Report", width = 12, status = "primary", solidHeader = TRUE,
+            tags$p("Generate an automatic report with all your analysis results."),
+            tags$hr(),
+            fluidRow(
+              column(6, 
+                tags$h4("HTML Report"),
+                tags$p("Interactive HTML report with charts and tables."),
+                actionButton("generate_html", "Generate HTML Report", class = "btn-primary btn-lg")
+              ),
+              column(6,
+                tags$h4("PDF Report"),
+                tags$p("PDF document for printing."),
+                actionButton("generate_pdf", "Generate PDF Report", class = "btn-success btn-lg")
+              )
+            ),
+            tags$hr(),
+            uiOutput("report_status")
+          )
+        )
       )
     )
   )
@@ -180,78 +188,88 @@ ui <- fluidPage(
 # ---- SERVER ----
 server <- function(input, output, session) {
 
-  # Reactive values
   rv <- reactiveValues(
     data = NULL,
     stats = NULL,
     filename = NULL
   )
 
-  # File upload handler
+  # File upload
   observeEvent(input$file_upload, {
     req(input$file_upload)
-    filepath <- input$file_upload$datapath
-    result <- load_data(filepath)
+    result <- load_data(input$file_upload$datapath)
 
     if (result$success) {
       rv$data <- result$data
       rv$filename <- input$file_upload$name
+      rv$stats <- calculate_statistics(rv$data)
 
-      # Update UI
-      showElement("data-info-panel")
-      showElement("column-panel")
+      # Update sidebar
+      show("data-info-sidebar")
+      show("column-sidebar")
 
-      # Update inputs
+      # Update all selectInputs
       updateSelectInput(session, "x_col", choices = names(rv$data))
       updateSelectInput(session, "y_col", choices = names(rv$data))
       updateSelectInput(session, "color_col", choices = c("None", names(rv$data)))
       updateSelectInput(session, "ts_date_col", choices = names(rv$data))
       updateSelectInput(session, "ts_value_col", choices = names(rv$data)[sapply(rv$data, is.numeric)])
 
-      # Calculate stats
-      rv$stats <- calculate_statistics(rv$data)
-
-      showNotification(paste("File", rv$filename, "uploaded successfully!"), type = "message")
+      showNotification(paste("File", rv$filename, "loaded successfully!"), type = "message")
     } else {
       showNotification(result$message, type = "error")
     }
   })
 
-  # Data info output
-  output$data_info_content <- renderUI({
+  # Sidebar info
+  output$sidebar_info <- renderUI({
     req(rv$data)
     info <- get_data_summary(rv$data)
-    HTML(paste0(
-      "<div class='info-item'><strong>File:</strong> ", rv$filename, "</div>",
-      "<div class='info-item'><strong>Rows:</strong> ", info$rows, "</div>",
-      "<div class='info-item'><strong>Columns:</strong> ", info$cols, "</div>",
-      "<div class='info-item'><strong>Missing:</strong> ", info$missing_total, "</div>"
-    ))
-  })
-
-  # Column list output
-  output$column_list <- renderUI({
-    req(rv$data)
-    col_html <- paste(
-      sapply(names(rv$data), function(col) {
-        type <- class(rv$data[[col]])[1]
-        paste0("<div class='col-item'>", col, " <span class='col-type'>", type, "</span></div>")
-      }),
-      collapse = ""
+    tagList(
+      tags$p(paste("File:", rv$filename)),
+      tags$p(paste("Rows:", info$rows)),
+      tags$p(paste("Columns:", info$cols)),
+      tags$p(paste("Missing:", info$missing_total))
     )
-    HTML(col_html)
   })
 
-  # Explore content
-  output$explore_content <- renderUI({
+  output$sidebar_columns <- renderUI({
     req(rv$data)
     tagList(
-      DT::datatable(head(rv$data, 20), options = list(scrollX = TRUE, pageLength = 10))
+      lapply(names(rv$data), function(col) {
+        type <- class(rv$data[[col]])[1]
+        tags$p(paste(col, "-", type))
+      })
     )
   })
 
-  # Stats grid
-  output$stats_grid <- renderUI({
+  # Data table
+  output$data_table <- DT::renderDataTable({
+    req(rv$data)
+    DT::datatable(rv$data, options = list(scrollX = TRUE, pageLength = 10))
+  })
+
+  # Data summary
+  output$data_summary <- renderPrint({
+    req(rv$data)
+    summary(rv$data)
+  })
+
+  # Missing plot
+  output$missing_plot <- renderPlotly({
+    req(rv$data)
+    missing <- colSums(is.na(rv$data))
+    df <- data.frame(Column = names(missing), Missing = as.numeric(missing))
+    p <- ggplot(df, aes(x = Column, y = Missing, fill = Column)) +
+      geom_bar(stat = "identity") +
+      theme_minimal() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+      labs(title = "Missing Values per Column")
+    ggplotly(p)
+  })
+
+  # Stats cards
+  output$stats_cards <- renderUI({
     req(rv$stats, rv$data)
     numeric_cols <- names(rv$data)[sapply(rv$data, is.numeric)]
     if (length(numeric_cols) == 0) return(tags$p("No numeric columns found"))
@@ -259,21 +277,24 @@ server <- function(input, output, session) {
     cards <- lapply(numeric_cols[1:min(6, length(numeric_cols))], function(col) {
       s <- rv$stats[[col]]
       if (is.null(s)) return(NULL)
-      tags$div(class = "stat-card",
-        tags$h4(col),
-        tags$div(class = "stat-values",
-          tags$div(class = "stat-item", tags$span(class = "stat-label", "Mean"), tags$span(class = "stat-value", round(s$mean, 2))),
-          tags$div(class = "stat-item", tags$span(class = "stat-label", "Median"), tags$span(class = "stat-value", round(s$median, 2))),
-          tags$div(class = "stat-item", tags$span(class = "stat-label", "SD"), tags$span(class = "stat-value", round(s$sd, 2))),
-          tags$div(class = "stat-item", tags$span(class = "stat-label", "Min"), tags$span(class = "stat-value", round(s$min, 2))),
-          tags$div(class = "stat-item", tags$span(class = "stat-label", "Max"), tags$span(class = "stat-value", round(s$max, 2)))
+      tags$div(class = "col-md-4",
+        tags$div(class = "stat-box",
+          tags$h4(col),
+          fluidRow(
+            column(6, tags$div(tags$span(class = "stat-label", "Mean: "), tags$span(class = "stat-value", round(s$mean, 2)))),
+            column(6, tags$div(tags$span(class = "stat-label", "Median: "), tags$span(class = "stat-value", round(s$median, 2))))
+          ),
+          fluidRow(
+            column(6, tags$div(tags$span(class = "stat-label", "SD: "), tags$span(class = "stat-value", round(s$sd, 2)))),
+            column(6, tags$div(tags$span(class = "stat-label", "Range: "), tags$span(class = "stat-value", round(s$range, 2))))
+          )
         )
       )
     })
     do.call(tagList, cards)
   })
 
-  # Correlation plot
+  # Correlation
   output$correlation_plot <- renderPlotly({
     req(rv$stats)
     if (!is.null(rv$stats$correlation)) {
@@ -293,7 +314,6 @@ server <- function(input, output, session) {
         "Histogram" = create_histogram(rv$data, input$x_col),
         "Box Plot" = create_box_plot(rv$data, input$y_col, color),
         "Line" = create_line_plot(rv$data, input$x_col, input$y_col, color),
-        "Heatmap" = create_heatmap(rv$stats$correlation),
         "Pie" = create_pie_chart(rv$data, input$x_col)
       )
     }, error = function(e) {
@@ -307,14 +327,12 @@ server <- function(input, output, session) {
 
     result <- analyze_time_series(rv$data, input$ts_date_col, input$ts_value_col, input$forecast_n)
 
-    showElement("ts-results")
-
     if (!is.null(result$forecast_plot)) {
       output$ts_plot <- renderPlotly(result$forecast_plot)
     }
 
     output$ts_summary <- renderUI({
-      tags$div(class = "ts-info",
+      tagList(
         tags$p(paste("Data points:", result$summary$n_points)),
         tags$p(paste("Range:", result$summary$start, "to", result$summary$end)),
         tags$p(paste("CV:", round(result$trend$cv, 2), "%"))
@@ -322,15 +340,23 @@ server <- function(input, output, session) {
     })
   })
 
-  # Report generation
+  # Report
   observeEvent(input$generate_html, {
     req(rv$data, rv$stats)
-    showNotification("Generating report...", type = "message")
+    output$report_status <- renderUI({
+      tags$div(class = "alert alert-info", "Generating report...")
+    })
     result <- generate_report(rv$data, rv$stats, "html")
     if (result$success) {
-      showNotification("Report generated!", type = "message")
+      output$report_status <- renderUI({
+        tags$div(class = "alert alert-success", 
+          tags$strong("Report generated! "), 
+          tags$a(href = result$filepath, "Download Report", target = "_blank"))
+      })
     } else {
-      showNotification(result$message, type = "error")
+      output$report_status <- renderUI({
+        tags$div(class = "alert alert-danger", result$message)
+      })
     }
   })
 }
