@@ -1,0 +1,41 @@
+---
+title: "Dashboard Analisis Data"
+---
+
+# Dashboard Interaktif
+
+Klik link di bawah untuk membuka Dashboard analisis data:
+
+**[Buka Dashboard →](../app.R)**
+
+## Fitur Dashboard
+
+| Tab | Deskripsi |
+|-----|-----------|
+| **Home** | Selamat datang & upload data |
+| **Explore** | Preview data, summary, missing values |
+| **Statistics** | Statistik deskriptif, correlation heatmap |
+| **Visualize** | 6 jenis chart interaktif |
+| **Time Series** | ARIMA forecasting |
+| **Reports** | Generate laporan otomatis |
+
+## Cara Menggunakan
+
+1. Buka RStudio
+2. Jalankan file `app.R`:
+   ```r
+   shiny::runApp("app.R")
+   ```
+3. Upload dataset Anda
+4. Eksplorasi data dengan fitur yang tersedia
+5. Generate laporan
+
+## Supported Data Formats
+
+- CSV
+- TXT (tab-separated)
+- XLS / XLSX
+
+---
+
+*Kembali ke [Home](index.Rmd)*

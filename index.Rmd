@@ -1,0 +1,36 @@
+---
+title: "Intelligent Data Analytics Dashboard"
+---
+
+# Selamat Datang di Platform Analisis Data
+
+Platform ini menyediakan fitur lengkap untuk eksplorasi dan analisis data secara otomatis (Auto EDA).
+
+## Fitur Utama
+
+| Fitur | Deskripsi |
+|-------|-----------|
+| **Upload Data** | Mendukung CSV, TXT, XLS, XLSX |
+| **Data Exploration** | Preview, summary, missing values |
+| **Statistical Analysis** | Mean, median, std dev, skewness, kurtosis |
+| **Interactive Visualization** | Scatter, Bar, Histogram, Box Plot, Line, Pie, Heatmap |
+| **Time Series** | ARIMA forecasting, decomposition |
+| **Report Generation** | Auto HTML/PDF reports |
+
+## Tools yang Digunakan
+
+- **Backend:** R (Shiny)
+- **Frontend:** HTML, CSS, JavaScript
+- **Libraries:** ggplot2, plotly, forecast, DT, dplyr
+
+## Cara Menggunakan
+
+1. Buka **Dashboard** untuk mulai analisis
+2. Upload dataset Anda
+3. Eksplorasi data dengan berbagai visualisasi
+4. Generate laporan otomatis
+
+---
+
+*Proyek Akhir - Pemrograman Sains Data*
+*Bakti Siregar, M.Sc.*

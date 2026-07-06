@@ -1,0 +1,44 @@
+---
+title: "Tentang Platform Ini"
+---
+
+# Tentang
+
+Platform **Intelligent Data Analytics Dashboard** dikembangkan sebagai proyek akhir mata kuliah Pemrograman Sains Data.
+
+## Tujuan
+
+Mengembangkan platform Business Intelligence & Data Analytics berskala mini yang mampu:
+
+- Melakukan eksplorasi data secara otomatis
+- Analisis statistik tingkat lanjut
+- Visualisasi data interaktif
+- Menghasilkan wawasan (insight generation)
+
+## Spesifikasi Teknis
+
+| Komponen | Teknologi |
+|----------|-----------|
+| Backend | R / Shiny |
+| Frontend | HTML, CSS, JavaScript |
+| Statistik | base R, stats |
+| Visualisasi | ggplot2, plotly |
+| Forecasting | forecast, tseries |
+| Reporting | rmarkdown |
+
+## Fitur yang Didukung
+
+1. **Multi-format Data** - CSV, TXT, XLS, XLSX
+2. **Advanced Statistics** - Deskriptif & inferensial
+3. **Interactive Charts** - 7 jenis visualisasi
+4. **Time Series Analysis** - ARIMA, decompostion
+5. **Auto Reports** - HTML & PDF
+
+## Pengembang
+
+- **Carol Dupinopereira** - Mahasiswa Pemrograman Sains Data
+- **Bakti Siregar, M.Sc.** - Dosen Pengampu
+
+---
+
+*Proyek Akhir Semester*

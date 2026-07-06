@@ -1,0 +1,107 @@
+---
+title: "Visualisasi Data"
+---
+
+# Visualisasi Data dengan R
+
+Visualisasi membantu memahami data secara lebih mudah dan cepat.
+
+## Package Populer
+
+### 1. ggplot2 (Grammar of Graphics)
+
+```{r, eval=FALSE}
+library(ggplot2)
+
+# Scatter Plot
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point(aes(color = factor(cyl)), size = 3) +
+  labs(title = "Scatter Plot", x = "Weight", y = "MPG") +
+  theme_minimal()
+
+# Bar Plot
+ggplot(mpg, aes(x = class)) +
+  geom_bar(fill = "steelblue") +
+  labs(title = "Bar Plot")
+
+# Histogram
+ggplot(mtcars, aes(x = mpg)) +
+  geom_histogram(bins = 10, fill = "green", color = "white") +
+  labs(title = "Histogram")
+
+# Box Plot
+ggplot(mtcars, aes(y = mpg, x = factor(cyl))) +
+  geom_boxplot(fill = "orange") +
+  labs(title = "Box Plot")
+```
+
+### 2. Plotly (Interactive)
+
+```{r, eval=FALSE}
+library(plotly)
+
+# Convert ggplot to interactive
+p <- ggplot(mtcars, aes(wt, mpg, color = factor(cyl))) +
+  geom_point()
+ggplotly(p)
+
+# Create interactive directly
+plot_ly(mtcars, x = ~wt, y = ~mpg, color = ~cyl, type = "scatter", mode = "markers")
+```
+
+### 3. Base R Graphics
+
+```{r, eval=FALSE}
+# Simple plots
+plot(mtcars$wt, mtcars$mpg, main = "Scatter Plot", xlab = "Weight", ylab = "MPG")
+hist(mtcars$mpg, main = "Histogram")
+boxplot(mpg ~ cyl, data = mtcars, main = "Box Plot")
+```
+
+## Jenis Visualisasi
+
+| Jenis | Fungsi | Kapan Digunakan |
+|-------|--------|-----------------|
+| Scatter | `geom_point()` | Hubungan 2 variabel |
+| Bar | `geom_bar()` | Perbandingan kategori |
+| Histogram | `geom_histogram()` | Distribusi data |
+| Box Plot | `geom_boxplot()` | Distribusi & outlier |
+| Line | `geom_line()` | Tren waktu |
+| Pie | `coord_polar()` | Proporsi |
+| Heatmap | `geom_tile()` | Korelasi |
+
+## Tips Visualisasi
+
+1. **Pilih grafik yang sesuai** dengan jenis data
+2. **Gunakan warna dengan bijak** - jangan terlalu banyak
+3. **Berikan label yang jelas** - judul, sumbu, legenda
+4. **Sederhana lebih baik** - hindari chart junk
+5. **Pertimbangkan audiens** - sesuaikan kompleksitas
+
+## Contoh Lengkap
+
+```{r, eval=FALSE}
+library(ggplot2)
+library(dplyr)
+
+# Data preparation
+mtcars$cyl <- as.factor(mtcars$cyl)
+
+# Multi-panel plot
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point(aes(color = cyl, size = hp)) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    title = "Fuel Efficiency Analysis",
+    subtitle = "By weight, cylinders, and horsepower",
+    x = "Weight (1000 lbs)",
+    y = "Miles per Gallon",
+    color = "Cylinders",
+    size = "Horsepower"
+  ) +
+  theme_minimal()
+```
+
+---
+
+*Bagian dari Platform Belajar Data*

@@ -1,0 +1,17 @@
+name: "Intelligent Data Analytics Dashboard"
+output_dir: "_site"
+navbar:
+  title: "Data Analytics Platform"
+  left:
+    - text: "Home"
+      href: "index.html"
+    - text: "About"
+      href: "about.html"
+    - text: "Data Science"
+      href: "data-science.html"
+    - text: "Statistik"
+      href: "statistik.html"
+    - text: "Visualisasi"
+      href: "visualisasi.html"
+    - text: "Dashboard"
+      href: "dashboard.html"

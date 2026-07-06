@@ -1,0 +1,120 @@
+---
+title: "Statistik"
+---
+
+# Belajar Statistik dengan R
+
+Statistik adalah ilmu mengumpulkan, menganalisis, dan menginterpretasi data.
+
+## Statistik Deskriptif
+
+### Ukuran Tendensi Sentral
+
+```{r, eval=FALSE}
+data <- c(10, 20, 30, 40, 50)
+
+mean(data)    # Rata-rata: 30
+median(data)  # Median: 30
+```
+
+### Ukuran Penyebaran
+
+```{r, eval=FALSE}
+sd(data)      # Standard Deviasi
+var(data)     # Varians
+IQR(data)     # Interquartile Range
+range(data)   # Range (max - min)
+```
+
+### Tabel Frekuensi
+
+```{r, eval=FALSE}
+# Tabel frekuensi
+table(data)
+
+# Persentase
+prop.table(table(data)) * 100
+```
+
+## Statistik Inferensial
+
+### Uji Normalitas
+
+```{r, eval=FALSE}
+library(nortest)
+
+# Shapiro-Wilk test
+shapiro.test(data)
+
+# Anderson-Darling test
+ad.test(data)
+```
+
+### Uji T (T-Test)
+
+```{r, eval=FALSE}
+# One sample t-test
+t.test(data, mu = 30)
+
+# Two sample t-test
+t.test(group1, group2)
+```
+
+### ANOVA
+
+```{r, eval=FALSE}
+# One-way ANOVA
+anova_result <- aov(value ~ group, data = mydata)
+summary(anova_result)
+```
+
+### Korelasi
+
+```{r, eval=FALSE}
+# Pearson correlation
+cor(x, y, method = "pearson")
+
+# Spearman correlation
+cor(x, y, method = "spearman")
+```
+
+## Regresi
+
+### Regresi Linear
+
+```{r, eval=FALSE}
+# Simple linear regression
+model <- lm(y ~ x, data = mydata)
+summary(model)
+
+# Multiple regression
+model <- lm(y ~ x1 + x2 + x3, data = mydata)
+```
+
+### Visualisasi Regresi
+
+```{r, eval=FALSE}
+library(ggplot2)
+
+ggplot(mydata, aes(x = x, y = y)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(title = "Regresi Linear")
+```
+
+## Ringkasan Fungsi Statistik di R
+
+| Fungsi | Kegunaan |
+|--------|----------|
+| `mean()` | Rata-rata |
+| `median()` | Median |
+| `sd()` | Standard Deviasi |
+| `var()` | Varians |
+| `cor()` | Korelasi |
+| `lm()` | Regresi Linear |
+| `t.test()` | Uji T |
+| `aov()` | ANOVA |
+
+---
+
+*Bagian dari Platform Belajar Data*

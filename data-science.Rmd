@@ -1,0 +1,80 @@
+---
+title: "Data Science"
+---
+
+# Apa itu Data Science?
+
+Data Science adalah ilmu yang menggabungkan statistik, programming, dan domain knowledge untuk menganalisis data dan menghasilkan wawasan bisnis.
+
+## Pilar Data Science
+
+```{r, echo=FALSE, fig.align='center'}
+library(knitr)
+knitr::kable(data.frame(
+  Pilar = c("Statistik", "Programming", "Domain Knowledge"),
+  Fungsi = c("Dasar analisis data", "Implementasi algoritma", "Paham konteks bisnis"),
+  Tools = c("R, Python", "R, Python, SQL", "Bisnis, Industri")
+))
+```
+
+## Tools Populer di R
+
+### 1. Tidyverse
+```{r, eval=FALSE}
+library(tidyverse)
+
+# Data manipulation
+data %>% filter(x > 10) %>% select(col1, col2)
+
+# Visualisasi
+ggplot(data, aes(x, y)) + geom_point()
+```
+
+### 2. ggplot2
+```{r, eval=FALSE}
+library(ggplot2)
+
+# Grammar of Graphics
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point(aes(color = factor(cyl))) +
+  geom_smooth(method = "lm") +
+  labs(title = "Fuel Efficiency vs Weight")
+```
+
+### 3. Plotly
+```{r, eval=FALSE}
+library(plotly)
+
+# Interactive visualization
+ggplotly(ggplot(mtcars, aes(wt, mpg)) + geom_point())
+```
+
+## Proses Data Science
+
+1. **Data Collection** - Mengumpulkan data
+2. **Data Cleaning** - Membersihkan data
+3. **Exploratory Data Analysis** - Eksplorasi data
+4. **Modeling** - Membangun model
+5. **Evaluation** - Evaluasi model
+6. **Deployment** - Menggunakan model
+
+## Contoh Analisis di R
+
+```{r, eval=FALSE}
+# Load data
+data <- read.csv("data.csv")
+
+# Struktur data
+str(data)
+summary(data)
+
+# Visualisasi
+library(ggplot2)
+ggplot(data, aes(x = variable1, y = variable2)) +
+  geom_point() +
+  theme_minimal()
+```
+
+---
+
+*Bagian dari Platform Belajar Data*
